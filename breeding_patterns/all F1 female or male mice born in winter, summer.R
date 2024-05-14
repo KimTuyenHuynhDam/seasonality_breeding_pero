@@ -16,16 +16,8 @@ matingcage  = read_excel("Mating Records.xlsx")  %>% select(1:5) %>%
   clean_column_names
 
 
-#write.xlsx(pero %>% filter(STOCK == species) %>% slice(1:50), "test_pero.xlsx")
-#write.xlsx(matingcage %>% filter(STOCK == species) %>% slice(1:25), "test_matingcage.xlsx")
 
-#all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
-
-all_stock = c("SM2")
-#species = c("BW")
-
-
-
+all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
 
 
 for ( species in all_stock) {
@@ -67,7 +59,7 @@ for ( species in all_stock) {
   
   
   merged_df = merge(DAMSIRE2, IND2, by = 'MatingNumber')  %>%
-    mutate(Birthday = as.Date(Birthday, format = "%Y-%m-%d"), # Adjust format as needed
+    mutate(Birthday = as.Date(Birthday, format = "%Y-%m-%d"), 
            BirthMonth = month(Birthday),
            BirthYear = year(Birthday))
   
@@ -109,7 +101,7 @@ for ( species in all_stock) {
     start_year <- ((year - min_year) %/% interval) * interval + min_year
     end_year <- start_year + interval - 1
     
-    # Use ifelse for vectorized conditional operation
+    
     year_group <- ifelse(end_year <= max_year, paste(start_year, end_year, sep = "-"), "Out of Range")
     
     return(year_group)
@@ -140,8 +132,8 @@ for ( species in all_stock) {
   wb <- createWorkbook()
   
   year_intervals <- c(3)
-  min_year <- min(merged_df2$BirthYear, na.rm = TRUE) +2
-  max_year <- max(merged_df2$BirthYear, na.rm = TRUE)  # Define max_year outside the function
+  min_year <- ifelse(species == "SM2", min(merged_df2$BirthYear, na.rm = TRUE) + 2, min(merged_df2$BirthYear, na.rm = TRUE))
+  max_year <- max(merged_df2$BirthYear, na.rm = TRUE)  
   
   for (interval in year_intervals) {
     for (season in c("winter", "summer", "all")) {
