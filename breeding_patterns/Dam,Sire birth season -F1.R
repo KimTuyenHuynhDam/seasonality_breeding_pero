@@ -126,7 +126,7 @@ for ( species in all_stock) {
   
   addWorksheet(wb, "Dam_summer_Sire_winter")
   writeData(wb, "Dam_summer_Sire_winter", Dam_summer_Sire_winter)  
-  # Save the workbook with a species-specific filename
+ 
   saveWorkbook(wb, paste0("Dam_Sire_Combinations_", species, ".xlsx"), overwrite = TRUE)
   
   
@@ -181,13 +181,8 @@ for ( species in all_stock) {
     
     # Loop through each combination
     for (combination in combinations) {
-      # Retrieve the data directly without appending species to the name
-      # Assuming the datasets are already in your global environment
-      if (!exists(combination)) {
-        next  # Skip if the dataset does not exist
-      }
       
-      # Since the data is not species-specific in name, directly use the variable
+     
       data_table <- get(combination)
       
       # Calculate seasonal births
@@ -202,7 +197,7 @@ for ( species in all_stock) {
       writeData(wb, combination, result_counts_pivoted)
     }
     
-    # Save the workbook with a species-specific filename
+
     file_name <- paste("Seasonal_Births_", species, "_", year_interval, "yr.xlsx")
     saveWorkbook(wb, file_name, overwrite = TRUE)
   }
