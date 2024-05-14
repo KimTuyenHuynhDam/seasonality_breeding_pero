@@ -18,10 +18,6 @@ matingcage  = read_excel("Mating Records.xlsx")  %>% select(1:5) %>%
 
 all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
 
-#all_stock = c("BW")
-#species = c("BW")
-
-
 
 
 
@@ -83,24 +79,22 @@ for ( species in all_stock) {
     left_join(dam_info, by = c("Dam" = "ID")) %>%
     left_join(sire_info, by = c("Sire" = "ID"))  %>%
     mutate(
-      # Calculate year of dam's and sire's birth
+      
       BirthYear_Dam = year(Birthday_Dam),
       BirthYear_Sire = year(Birthday_Sire),
-      # Calculate intervals in days from dam's and sire's birthdays to delivery date
+      
+      
       interval_from_BirthdayDam_to_DeliveryDate = as.integer(difftime(Birthday, Birthday_Dam, units = "days")),
       interval_from_BirthdaySire_to_DeliveryDate = as.integer(difftime(Birthday, Birthday_Sire, units = "days"))
     )
   #############
   
-  library(dplyr)
-  library(openxlsx)
-  library(lubridate)
   
   # Define winter and summer months
   winter_months <- c(10, 11, 12, 1, 2, 3)
   summer_months <- setdiff(1:12, winter_months)
   
-  # Updated function to include max_year for Dam and Sire birth year filtering
+ 
   calculate_min_interval <- function(data, birth_months, parent_type = "Dam", max_year) {
     filter_column_birth_month <- ifelse(parent_type == "Dam", "BirthMonth_Dam", "BirthMonth_Sire")
     filter_column_birth_year <- ifelse(parent_type == "Dam", "BirthYear_Dam", "BirthYear_Sire")
@@ -114,16 +108,16 @@ for ( species in all_stock) {
       filter(MinInterval >0 & MinInterval < 1096 ) ## filter problematic data, such as negative days, or days more than 3 years (1095 days)
   }
   
-  # Specify the maximum year for filtering
-  max_year <- 2023  # Adjust this year as needed
+
+  max_year <- 2023  
   
-  # Applying the function to each situation with the max_year filter
+ 
   dam_winter <- calculate_min_interval(merged_df2, winter_months, "Dam", max_year)
   sire_winter <- calculate_min_interval(merged_df2, winter_months, "Sire", max_year)
   dam_summer <- calculate_min_interval(merged_df2, summer_months, "Dam", max_year)
   sire_summer <- calculate_min_interval(merged_df2, summer_months, "Sire", max_year)
   
-  # Exporting to Excel
+ 
   wb <- createWorkbook()
   addWorksheet(wb, "Dam Winter")
   writeData(wb, "Dam Winter", dam_winter)
