@@ -18,9 +18,6 @@ matingcage  = read_excel("Mating Records.xlsx")  %>% select(1:5) %>%
 
 all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
 
-#all_stock = c("BW")
-#species = c("BW")
-
 
 
 
@@ -64,7 +61,7 @@ for ( species in all_stock) {
   
   
   merged_df = merge(DAMSIRE2, IND2, by = 'MatingNumber')  %>%
-    mutate(Birthday = as.Date(Birthday, format = "%Y-%m-%d"), # Adjust format as needed
+    mutate(Birthday = as.Date(Birthday, format = "%Y-%m-%d"),
            BirthMonth = month(Birthday),
            BirthYear = year(Birthday))
   
