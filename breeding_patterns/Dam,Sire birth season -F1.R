@@ -16,16 +16,7 @@ matingcage  = read_excel("Mating Records.xlsx")  %>% select(1:5) %>%
   clean_column_names
 
 
-#write.xlsx(pero %>% filter(STOCK == species) %>% slice(1:50), "test_pero.xlsx")
-#write.xlsx(matingcage %>% filter(STOCK == species) %>% slice(1:25), "test_matingcage.xlsx")
-
-#all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
-
-all_stock = c("SM2")
-
-
-
-
+all_stock= c("BW", "LL", "PO", "IS", "EP", "SM2")
 
 
 for ( species in all_stock) {
@@ -123,22 +114,18 @@ for ( species in all_stock) {
   
   # Create a new workbook for the current species
   wb <- createWorkbook()
-  
-  # Add sheets for each dataset combination and write the data
-  # Directly refer to your datasets since their names don't change per species
-  
+ 
   addWorksheet(wb, "Dam_winter_Sire_winter")
-  writeData(wb, "Dam_winter_Sire_winter", Dam_winter_Sire_winter)  # Directly use the dataset
+  writeData(wb, "Dam_winter_Sire_winter", Dam_winter_Sire_winter)  
   
   addWorksheet(wb, "Dam_summer_Sire_summer")
-  writeData(wb, "Dam_summer_Sire_summer", Dam_summer_Sire_summer)  # Directly use the dataset
+  writeData(wb, "Dam_summer_Sire_summer", Dam_summer_Sire_summer) 
   
   addWorksheet(wb, "Dam_winter_Sire_summer")
-  writeData(wb, "Dam_winter_Sire_summer", Dam_winter_Sire_summer)  # Directly use the dataset
+  writeData(wb, "Dam_winter_Sire_summer", Dam_winter_Sire_summer)  
   
   addWorksheet(wb, "Dam_summer_Sire_winter")
-  writeData(wb, "Dam_summer_Sire_winter", Dam_summer_Sire_winter)  # Directly use the dataset
-  
+  writeData(wb, "Dam_summer_Sire_winter", Dam_summer_Sire_winter)  
   # Save the workbook with a species-specific filename
   saveWorkbook(wb, paste0("Dam_Sire_Combinations_", species, ".xlsx"), overwrite = TRUE)
   
@@ -148,9 +135,14 @@ for ( species in all_stock) {
     data_long <- data %>%
       pivot_longer(cols = -BirthMonth, names_to = "Year", values_to = "Count", 
                    names_prefix = "Y", names_transform = list(Year = as.integer)) %>%
-      filter(Count > 0) # Keep rows with actual counts
+      filter(Count > 0) 
 
-      year_intervals <- seq(from = min_year+2, to = max_year + year_interval, by = year_interval)
+   year_intervals <- seq(
+    from = ifelse(species == "SM2", min_year + 2, min_year + 1), 
+    to = max_year + year_interval, 
+    by = year_interval
+      )
+
     
     # Generate labels for each interval
     interval_labels <- sapply(1:(length(year_intervals)-1), function(i) {
@@ -172,12 +164,8 @@ for ( species in all_stock) {
     counts <- data_long %>%
       group_by(YearGroup, BirthSeason) %>%
       summarise(Count = sum(Count), .groups = 'drop') %>%
-      filter(BirthSeason %in% c("Winter", "Summer")) #%>%# Focus on Winter and Summer
-    #pivot_wider(
-    #  names_from = YearGroup,
-    #  values_from = Count,
-    #  values_fill = list(Count = 0) # Fill missing values with 0
-    # )
+      filter(BirthSeason %in% c("Winter", "Summer")) 
+
     return(counts)
   }
   
